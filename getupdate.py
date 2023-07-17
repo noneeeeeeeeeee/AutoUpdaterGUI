@@ -8,20 +8,63 @@ import sys
 import shutil
 import threading
 import time
+import configparser
+from tendo import singleton
 
 s = requests.Session()
 
-# Define the constants
-USERNAME = "noneeeeeeeeeee"
-REPO = "InstructionsDatabase"
-API_KEY = "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"
-VERSION_FILE = "version.txt"  # This is where I changed get-update.js to version.txt
-APP_FILE = "getupdate.exe"
+# Create only 1 Instance
+me = singleton.SingleInstance()
+
+
+
+config = configparser.ConfigParser()
+
+# Try to read the config file
+
+    # If the file exists, load the values
+config.read("config.ini")
+try:
+    # Try to get the values from the config file
+    USERNAME = config["DEFAULT"]["USERNAME"]
+    REPO = config["DEFAULT"]["REPO"]
+    API_KEY = config["DEFAULT"]["API_KEY"]
+    VERSION_FILE = config["DEFAULT"]["VERSION_FILE"]
+    APP_FILE = config["DEFAULT"]["APP_FILE"]
+except KeyError as e:
+    # If a key is missing, use a default value or ask the user for input
+    print(f"{e} is missing in the config file, Filling it with default values")
+    USERNAME = "YOUR_USERNAME_HERE"
+    REPO = "YOUR_REPOSITORY_HERE"
+    API_KEY = "YOUR_API_KEY_HERE"
+    VERSION_FILE = "version.txt"
+    APP_FILE = "getupdate.exe"
+    # Write the values to the config file
+    config["DEFAULT"] = {
+        "USERNAME": USERNAME,
+        "REPO": REPO,
+        "API_KEY": API_KEY,
+        "VERSION_FILE": VERSION_FILE,
+        "APP_FILE": APP_FILE,
+    }
+    with open("config.ini", "w") as f:
+        config.write(f)
+    sys.exit()
+
+
+
+
+
 
 
 def check_version():
     print("check version called!")
-    output = open(VERSION_FILE, "r").read().strip()
+    try:
+        output = open(VERSION_FILE, "r").read().strip()
+    except FileNotFoundError:
+        print("Version.txt file not found, creating a new one")
+        output = "0.0.0"
+        open(VERSION_FILE, "w").write(output)
 
     with requests.get(
         f"https://api.github.com/repos/{USERNAME}/{REPO}/releases/latest",
@@ -32,6 +75,7 @@ def check_version():
         print("response called!")
     print("Return Called!", output, latest_tag)
     return output == latest_tag
+
 
 
 # Add a user agent header to your requests
@@ -192,6 +236,8 @@ else:
     label.configure(text="There is an update available!")
     updatebtn.configure(state=ctk.NORMAL)
     updatebtn.configure(fg_color="green")
+
+
 
 # Start the main loop using root.mainloop
 root.mainloop()
