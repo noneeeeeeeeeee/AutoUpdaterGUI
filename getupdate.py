@@ -176,7 +176,7 @@ resultcheck = check_version()
 root = ctk.CTk()
 root.title("Updater v2.0")
 root.geometry("320x400")
-root.eval('tk::PlaceWindow %s center' % root.winfo_pathname(root.winfo_id()))
+
 root.resizable(False, False)
 # Set the appearance mode and color theme using ctk.set_appearance_mode and ctk.set_color_theme
 ctk.set_appearance_mode("dark")
@@ -254,7 +254,8 @@ url = f"https://api.github.com/repos/{USERNAME}/{REPO}/releases/latest"
 headers = {"Authorization": f"token {API_KEY}"}
 response = requests.get(url, headers=headers)
 
-if check_version == False:
+checkchangelog = check_version()
+if checkchangelog == False:
     if response.status_code == 200:
         # Parse the JSON response
         data = response.json()
