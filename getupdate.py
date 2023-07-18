@@ -17,12 +17,11 @@ s = requests.Session()
 me = singleton.SingleInstance()
 
 
-
 config = configparser.ConfigParser()
 
 # Try to read the config file
 
-    # If the file exists, load the values
+# If the file exists, load the values
 config.read("config.ini")
 try:
     # Try to get the values from the config file
@@ -52,11 +51,6 @@ except KeyError as e:
     sys.exit()
 
 
-
-
-
-
-
 def check_version():
     print("check version called!")
     try:
@@ -75,7 +69,6 @@ def check_version():
         print("response called!")
     print("Return Called!", output, latest_tag)
     return output == latest_tag
-
 
 
 # Add a user agent header to your requests
@@ -136,19 +129,36 @@ def update():
                 # Update the downloaded size by adding the chunk size
                 downloaded_size += len(chunk)
                 progress.set(downloaded_size / total_size)
+                downloadsizeshow = round(downloaded_size / total_size * 100, 8)
+                percentageshow.configure(text = f"{downloadsizeshow}%")
                 root.update()
-                time.sleep(0.01)
+                time.sleep(0.1)
 
-
-
-
-
-
-        
     # Extract the zip file and delete it using a context manager and os.remove
-    with zipfile.ZipFile("update.zip", "r") as f:
-        f.extractall()
+    with zipfile.ZipFile(file="update.zip") as zip_file:
+        # Get the total size of the zip file
+        uncompress_size = sum((file.file_size for file in zip_file.infolist()))
+        # Initialize the extracted size
         label.configure(text="Extracting File...")
+        time.sleep(0.5)
+        extracted_size = 0
+        percentageshow.configure("0%")
+        progress.set(0)
+        # Loop over each file
+        for file in zip_file.infolist():
+            # Extract each file
+            zip_file.extract(member=file)
+            # Update the extracted size
+            extracted_size += file.file_size
+            # Calculate the percentage of completion
+            progressextract = extracted_size / uncompress_size
+            # Update the progress bar value
+            progress.set(progressextract)
+            progressextractshow = round(progressextract * 100, 8)
+            percentageshow.configure(text = f"{progressextractshow}%")
+            # Update the app window
+            root.update_idletasks()
+            time.sleep(0.9)
     os.remove("update.zip")
     # Show a success message using message["text"]
     updatebtn.configure(state=ctk.DISABLED)
@@ -156,37 +166,40 @@ def update():
     checkforupdates.configure(state=ctk.NORMAL)
 
     output = open(VERSION_FILE, "r").read().strip()
-    label.configure(text= f"Update Completed! Now on Version: {output}")
+    label.configure(text=f"Update Completed! Now on Version: {output}")
 
 
 resultcheck = check_version()
 
 
 # Create the GUI using ctk.CTk and ctk.geometry
-root = ctk.CTk()  
-root.title("Updater v1.0")
-root.geometry("320x100")
-
+root = ctk.CTk()
+root.title("Updater v2.0")
+root.geometry("320x400")
+root.eval('tk::PlaceWindow %s center' % root.winfo_pathname(root.winfo_id()))
+root.resizable(False, False)
 # Set the appearance mode and color theme using ctk.set_appearance_mode and ctk.set_color_theme
-ctk.set_appearance_mode("dark")  
-ctk.set_default_color_theme("green")  
+ctk.set_appearance_mode("dark")
+ctk.set_default_color_theme("green")
 
 # Create the widgets using ctk.Label, ctk.Button, ctk.Progressbar, and ctk.pack
-label = ctk.CTkLabel(
-    root, text="Checking for Updates..."
-)  
-label.pack()
+label = ctk.CTkLabel(root, text="Checking for Updates...")
+label.grid(row=0, column=0, sticky=ctk.N, columnspan=2)
 
-progress = ctk.CTkProgressBar(
-    root, orientation="horizontal", mode="determinate"
-)  
-progress.pack()
-progress.set(0) 
+progress = ctk.CTkProgressBar(root, orientation="horizontal", mode="determinate", width=200) 
+progress.grid(row=1, column=0, columnspan=2, sticky=ctk.W, padx=10)
+progress.set(0)
+
+percentageshow = ctk.CTkLabel(root, text="00.00000000%") 
+percentageshow.grid(row=1, column=1, sticky=ctk.E, padx=10)
 
 updatebtn = ctk.CTkButton(
-    root, text="Update", state=ctk.DISABLED, command=lambda: threading.Thread(target=update).start()
+    root,
+    text="Update",
+    state=ctk.DISABLED,
+    command=lambda: threading.Thread(target=update).start(),
 )
-
+updatebtn.grid(row=2, column=0, sticky='nsew', padx=10, pady=5)
 
 def check_updatemanual():
     resultcheck = check_version()
@@ -198,12 +211,6 @@ def check_updatemanual():
         updatebtn.configure(state=ctk.DISABLED)
         updatebtn.configure(fg_color="gray")
 
-    else:
-        label.configure(text="There is an update available!")
-        updatebtn.configure(state=ctk.NORMAL)
-        updatebtn.configure(fg_color="green")
-
-
 
 checkforupdates = ctk.CTkButton(
     root,
@@ -211,20 +218,9 @@ checkforupdates = ctk.CTkButton(
     command=lambda: threading.Thread(target=check_updatemanual).start(),
     fg_color="#00a1d8",
     hover_color="#005E7D",
-)  # This is where I changed tk to ctk and added root as an argument
+) 
+checkforupdates.grid(row=2, column=1, sticky='nsew', padx=10, pady=5)
 
-
-updatebtn.pack(
-    side=ctk.LEFT, padx=10, pady=10
-)  # This is where I packed the update button on the left with some margin
-checkforupdates.pack(
-    side=ctk.RIGHT, padx=10, pady=10
-)  # This is where I packed the check for updates button on the right with some margin
-
-message = ctk.CTkLabel(
-    root, text=""
-)  # This is where I changed tk to ctk and added root as an argument
-message.pack()
 
 # Check for updates and enable the button if needed using an if-else statement and button["state"]
 
@@ -233,11 +229,52 @@ if resultcheck == True:
     updatebtn.configure(state=ctk.DISABLED)
     updatebtn.configure(fg_color="gray")
 else:
-    label.configure(text="There is an update available!")
+    with requests.get(
+        f"https://api.github.com/repos/{USERNAME}/{REPO}/releases/latest",
+        auth=(USERNAME, API_KEY),
+    ) as response:
+        response.raise_for_status()
+        latest_tag = response.json()["tag_name"]
+        label.configure(text=f"There is an update available! ({latest_tag})")
     updatebtn.configure(state=ctk.NORMAL)
     updatebtn.configure(fg_color="green")
 
 
+#Changelog Show here
+changeloglabel = ctk.CTkLabel(root, text="Changelog")
+changeloglabel.grid(row=3, column=0, sticky=ctk.W, padx=15, pady=5)
+
+# Create a CTk textbox
+textbox = ctk.CTkTextbox(root, width=300, height=250)
+textbox.grid(row=4, column=0, columnspan=2, pady=5)
+
+
+url = f"https://api.github.com/repos/{USERNAME}/{REPO}/releases/latest"
+# Define a function to display the latest release
+headers = {"Authorization": f"token {API_KEY}"}
+response = requests.get(url, headers=headers)
+
+if check_version == False:
+    if response.status_code == 200:
+        # Parse the JSON response
+        data = response.json()
+
+        # Extract the information you need
+        tag_name = data["tag_name"]
+        release_name = data["name"]
+        release_date = data["published_at"]
+        changelog = data["body"]
+
+        # Set the text of the textbox widget to the changelog
+        textbox.insert(ctk.END, changelog)
+
+        # Start the main loop of the window
+    else:
+        # Handle the error
+        print(f"Error: {response.status_code}")
+else: 
+    textbox.insert(ctk.END, "Your Up To Date! Nothing to See Here..")
+textbox.configure(state="disabled")
 
 # Start the main loop using root.mainloop
 root.mainloop()
