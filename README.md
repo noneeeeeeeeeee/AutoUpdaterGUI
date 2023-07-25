@@ -18,7 +18,7 @@ Update your app to the latest release by a click of a button!
 
 ### Need a portable version?
 
-Instructions and download provided [here](https://github.com/noneeeeeeeeeee/AutoUpdaterGUI/releases/tag/1.0.1-Legacy)
+Instructions and download provided [here](https://github.com/noneeeeeeeeeee/AutoUpdaterGUI/releases/tag/1.x-Legacy)
 
 ## How it works
 
