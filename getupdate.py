@@ -170,7 +170,7 @@ resultcheck = check_version()
 
 
 root = ctk.CTk()
-root.title("Updater v2.1.1")
+root.title("Updater v2.0.2")
 root.geometry("320x400")
 
 root.resizable(False, False)
