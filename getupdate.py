@@ -130,7 +130,6 @@ def update():
                 downloadsizeshow = round(downloaded_size / total_size * 100, 8)
                 percentageshow.configure(text = f"{downloadsizeshow}%")
                 root.update()
-                time.sleep(0.1)
 
     with zipfile.ZipFile(file="update.zip") as zip_file:
 
@@ -155,7 +154,7 @@ def update():
             percentageshow.configure(text = f"{progressextractshow}%")
 
             root.update_idletasks()
-            time.sleep(0.9)
+            time.sleep(0.01)
     os.remove("update.zip")
 
     updatebtn.configure(state=ctk.DISABLED)
@@ -171,7 +170,7 @@ resultcheck = check_version()
 
 
 root = ctk.CTk()
-root.title("Updater v2.0")
+root.title("Updater v2.1.1")
 root.geometry("320x400")
 
 root.resizable(False, False)
