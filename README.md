@@ -4,8 +4,8 @@ Update your app to the latest release by a click of a button!
 
 ##### Table of Contents
 
-[How to Configure the Auto Updater](#AutoUpdaterLatest)
-[How to Configure the Auto Updater(Before v2.5)](#AutoUpdaterB2.5)
+[How to Configure the Auto Updater](how-to-configure-the-auto-updaterlatest)
+[How to Configure the Auto Updater(Before v2.5)](AutoUpdaterB2.5)
 [Portable Version](#Portable)
 [How it Works](#Howitworks)
 
