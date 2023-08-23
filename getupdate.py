@@ -28,6 +28,8 @@ try:
     API_KEY = config["DEFAULT"]["API_KEY"]
     VERSION_FILE = config["DEFAULT"]["VERSION_FILE"]
     APP_FILE = config["DEFAULT"]["APP_FILE"]
+    FILE_TYPE = config["DEFAULT"]["FILE_TYPE"]
+    UNZIP_FILE = config["DEFAULT"]["UNZIP_FILE"]
 except KeyError as e:
 
     print(f"{e} is missing in the config file, Filling it with default values")
@@ -36,6 +38,8 @@ except KeyError as e:
     API_KEY = "YOUR_API_KEY_HERE"
     VERSION_FILE = "version.txt"
     APP_FILE = "getupdate.exe"
+    FILE_TYPE = ".zip"
+    UNZIP_FILE = True
 
     config["DEFAULT"] = {
         "USERNAME": USERNAME,
@@ -43,6 +47,9 @@ except KeyError as e:
         "API_KEY": API_KEY,
         "VERSION_FILE": VERSION_FILE,
         "APP_FILE": APP_FILE,
+        "FILE_TYPE": FILE_TYPE,
+        "UNZIP_FILE": UNZIP_FILE,
+
     }
     with open("config.ini", "w") as f:
         config.write(f)
@@ -104,7 +111,7 @@ def update():
 
         asset_url = None
         for asset in response.json()["assets"]:
-            if asset["name"].endswith(".zip"):
+            if asset["name"].endswith(FILE_TYPE):
                 asset_url = asset["url"]
                 break
 
@@ -116,7 +123,7 @@ def update():
     with requests.get(asset_url, headers=headers, stream=True) as response:
         response.raise_for_status()
 
-        with open("update.zip", "wb") as f:
+        with open(f"update{FILE_TYPE}", "wb") as f:
 
             total_size = int(response.headers["Content-Length"])
             label.configure(text="Downloading File...")
@@ -131,31 +138,33 @@ def update():
                 percentageshow.configure(text = f"{downloadsizeshow}%")
                 root.update()
 
-    with zipfile.ZipFile(file="update.zip") as zip_file:
+    if(UNZIP_FILE == True):
 
-        uncompress_size = sum((file.file_size for file in zip_file.infolist()))
+        with zipfile.ZipFile(file="update.zip") as zip_file:
 
-        label.configure(text="Extracting File...")
-        time.sleep(0.5)
-        extracted_size = 0
-        percentageshow.configure("0%")
-        progress.set(0)
+            uncompress_size = sum((file.file_size for file in zip_file.infolist()))
 
-        for file in zip_file.infolist():
+            label.configure(text="Extracting File...")  
+            time.sleep(0.5)
+            extracted_size = 0
+            percentageshow.configure("0%")
+            progress.set(0)
 
-            zip_file.extract(member=file)
+            for file in zip_file.infolist():
 
-            extracted_size += file.file_size
+                zip_file.extract(member=file)
 
-            progressextract = extracted_size / uncompress_size
+                extracted_size += file.file_size
 
-            progress.set(progressextract)
-            progressextractshow = round(progressextract * 100, 8)
-            percentageshow.configure(text = f"{progressextractshow}%")
+                progressextract = extracted_size / uncompress_size
 
-            root.update_idletasks()
-            time.sleep(0.01)
-    os.remove("update.zip")
+                progress.set(progressextract)
+                progressextractshow = round(progressextract * 100, 8)
+                percentageshow.configure(text = f"{progressextractshow}%")
+
+                root.update_idletasks()
+                time.sleep(0.01)
+        os.remove("update.zip")
 
     updatebtn.configure(state=ctk.DISABLED)
     updatebtn.configure(fg_color="gray")
@@ -170,7 +179,7 @@ resultcheck = check_version()
 
 
 root = ctk.CTk()
-root.title("Updater v2.0.2")
+root.title("Updater v2.1")
 root.geometry("320x400")
 
 root.resizable(False, False)
