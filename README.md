@@ -2,20 +2,20 @@
 
 Update your app to the latest release by a click of a button!
 
-##### Table of Contents
+#### Table of Contents
 
-[How to Configure the Auto Updater](how-to-configure-the-auto-updaterlatest)
-[How to Configure the Auto Updater(Before v2.5)](AutoUpdaterB2.5)
-[Portable Version](#Portable)
-[How it Works](#Howitworks)
+- [How to Configure the Auto Updater](#how-to-configure-the-auto-updaterlatest)
+- [How to Configure the Auto Updater(Before v2.5)](#how-to-configure-the-auto-updaterbefore-v25)
+- [Portable Version](#Portable)
+- [How it Works](#Howitworks)
 
-<a name="AutoUpdaterLatest"></a>
+<hr>
 
 ## How to configure the auto updater(Latest)
 
-`TBD..`
+`TBD..` `Currently just ignore this since 2.5 hasnt been released yet and is unstable`
 
-<a name="AutoUpdaterB2.5"></a>
+
 
 ## How to configure the auto updater(Before V2.5)
 
@@ -31,6 +31,7 @@ Update your app to the latest release by a click of a button!
 
 ![Untitled](https://github.com/noneeeeeeeeeee/AutoUpdaterGUI/assets/64634725/21abae9d-4233-48f8-9d95-5da691a2348b)
 
+<hr>
 <a name="Portable"></a>
 
 ### Need a portable version?
