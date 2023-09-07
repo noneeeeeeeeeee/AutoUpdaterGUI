@@ -15,14 +15,17 @@ s = requests.Session()
 
 # Create only 1 Instance
 me = singleton.SingleInstance()
-
-
 config = configparser.ConfigParser()
 
 
+root = ctk.CTk()
+root.title("Updater v2.1")
+root.geometry("320x400")
+
+root.resizable(False, False)
+
 config.read("config.ini")
 try:
-
     USERNAME = config["DEFAULT"]["USERNAME"]
     REPO = config["DEFAULT"]["REPO"]
     API_KEY = config["DEFAULT"]["API_KEY"]
@@ -31,7 +34,6 @@ try:
     FILE_TYPE = config["DEFAULT"]["FILE_TYPE"]
     UNZIP_FILE = config["DEFAULT"]["UNZIP_FILE"]
 except KeyError as e:
-
     print(f"{e} is missing in the config file, Filling it with default values")
     USERNAME = "YOUR_USERNAME_HERE"
     REPO = "YOUR_REPOSITORY_HERE"
@@ -49,7 +51,6 @@ except KeyError as e:
         "APP_FILE": APP_FILE,
         "FILE_TYPE": FILE_TYPE,
         "UNZIP_FILE": UNZIP_FILE,
-
     }
     with open("config.ini", "w") as f:
         config.write(f)
@@ -76,18 +77,20 @@ def check_version():
     return output == latest_tag
 
 
-
 s.headers["User-Agent"] = "Custom"
 
 
 def update():
+    # Disable User From Breaking The Code
     updatebtn.configure(state=ctk.DISABLED)
     checkforupdates.configure(state=ctk.DISABLED)
+    
+
+
     if not ctypes.windll.shell32.IsUserAnAdmin():
         ctypes.windll.shell32.ShellExecuteW(
             None, "runas", sys.executable, __file__, None, 1
         )
-
 
     [
         os.remove(file)
@@ -124,7 +127,6 @@ def update():
         response.raise_for_status()
 
         with open(f"update{FILE_TYPE}", "wb") as f:
-
             total_size = int(response.headers["Content-Length"])
             label.configure(text="Downloading File...")
             time.sleep(1)
@@ -135,23 +137,20 @@ def update():
                 downloaded_size += len(chunk)
                 progress.set(downloaded_size / total_size)
                 downloadsizeshow = round(downloaded_size / total_size * 100, 8)
-                percentageshow.configure(text = f"{downloadsizeshow}%")
+                percentageshow.configure(text=f"{downloadsizeshow}%")
                 root.update()
 
-    if(UNZIP_FILE == True):
-
-        with zipfile.ZipFile(file="update.zip") as zip_file:
-
+    if UNZIP_FILE == True:
+        with zipfile.ZipFile(file=f"update{FILE_TYPE}") as zip_file:
             uncompress_size = sum((file.file_size for file in zip_file.infolist()))
 
-            label.configure(text="Extracting File...")  
+            label.configure(text="Extracting File...")
             time.sleep(0.5)
             extracted_size = 0
             percentageshow.configure("0%")
             progress.set(0)
 
             for file in zip_file.infolist():
-
                 zip_file.extract(member=file)
 
                 extracted_size += file.file_size
@@ -160,11 +159,12 @@ def update():
 
                 progress.set(progressextract)
                 progressextractshow = round(progressextract * 100, 8)
-                percentageshow.configure(text = f"{progressextractshow}%")
+                percentageshow.configure(text=f"{progressextractshow}%")
 
                 root.update_idletasks()
                 time.sleep(0.01)
         os.remove("update.zip")
+        
 
     updatebtn.configure(state=ctk.DISABLED)
     updatebtn.configure(fg_color="gray")
@@ -177,13 +177,6 @@ def update():
 resultcheck = check_version()
 
 
-
-root = ctk.CTk()
-root.title("Updater v2.1")
-root.geometry("320x400")
-
-root.resizable(False, False)
-
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("green")
 
@@ -191,11 +184,13 @@ ctk.set_default_color_theme("green")
 label = ctk.CTkLabel(root, text="Checking for Updates...")
 label.grid(row=0, column=0, sticky=ctk.N, columnspan=2)
 
-progress = ctk.CTkProgressBar(root, orientation="horizontal", mode="determinate", width=200) 
+progress = ctk.CTkProgressBar(
+    root, orientation="horizontal", mode="determinate", width=200
+)
 progress.grid(row=1, column=0, columnspan=2, sticky=ctk.W, padx=10)
 progress.set(0)
 
-percentageshow = ctk.CTkLabel(root, text="00.00000000%") 
+percentageshow = ctk.CTkLabel(root, text="00.00000000%")
 percentageshow.grid(row=1, column=1, sticky=ctk.E, padx=10)
 
 updatebtn = ctk.CTkButton(
@@ -204,7 +199,7 @@ updatebtn = ctk.CTkButton(
     state=ctk.DISABLED,
     command=lambda: threading.Thread(target=update).start(),
 )
-updatebtn.grid(row=2, column=0, sticky='nsew', padx=10, pady=5)
+updatebtn.grid(row=2, column=0, sticky="nsew", padx=10, pady=5)
 
 def check_updatemanual():
     resultcheck = check_version()
@@ -225,17 +220,14 @@ def check_updatemanual():
         updatebtn.configure(state=ctk.NORMAL)
         updatebtn.configure(fg_color="green")
 
-
 checkforupdates = ctk.CTkButton(
     root,
     text="Check for Updates",
     command=lambda: threading.Thread(target=check_updatemanual).start(),
     fg_color="#00a1d8",
     hover_color="#005E7D",
-) 
-checkforupdates.grid(row=2, column=1, sticky='nsew', padx=10, pady=5)
-
-
+)
+checkforupdates.grid(row=2, column=1, sticky="nsew", padx=10, pady=5)
 
 
 if resultcheck == True:
@@ -252,7 +244,6 @@ else:
         label.configure(text=f"There is an update available! ({latest_tag})")
     updatebtn.configure(state=ctk.NORMAL)
     updatebtn.configure(fg_color="green")
-
 
 
 changeloglabel = ctk.CTkLabel(root, text="Changelog")
@@ -276,7 +267,7 @@ if checkchangelog == False:
         textbox.insert(ctk.END, changelog)
     else:
         print(f"Error: {response.status_code}")
-else: 
+else:
     textbox.insert(ctk.END, "Your Up To Date! Nothing to See Here..")
 
 
