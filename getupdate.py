@@ -19,7 +19,7 @@ config = configparser.ConfigParser()
 
 
 root = ctk.CTk()
-root.title("Updater v2.1")
+root.title("Updater v2.5")
 root.geometry("320x400")
 
 root.resizable(False, False)
@@ -84,8 +84,6 @@ def update():
     # Disable User From Breaking The Code
     updatebtn.configure(state=ctk.DISABLED)
     checkforupdates.configure(state=ctk.DISABLED)
-    
-
 
     if not ctypes.windll.shell32.IsUserAnAdmin():
         ctypes.windll.shell32.ShellExecuteW(
@@ -164,7 +162,6 @@ def update():
                 root.update_idletasks()
                 time.sleep(0.01)
         os.remove("update.zip")
-        
 
     updatebtn.configure(state=ctk.DISABLED)
     updatebtn.configure(fg_color="gray")
@@ -201,6 +198,7 @@ updatebtn = ctk.CTkButton(
 )
 updatebtn.grid(row=2, column=0, sticky="nsew", padx=10, pady=5)
 
+
 def check_updatemanual():
     resultcheck = check_version()
     label.configure(text="Checking for Updates...")
@@ -219,6 +217,7 @@ def check_updatemanual():
             label.configure(text=f"There is an update available! ({latest_tag})")
         updatebtn.configure(state=ctk.NORMAL)
         updatebtn.configure(fg_color="green")
+
 
 checkforupdates = ctk.CTkButton(
     root,
