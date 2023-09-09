@@ -1,4 +1,4 @@
 config.ini
 *.txt
-*ico
 .vscode
+output
