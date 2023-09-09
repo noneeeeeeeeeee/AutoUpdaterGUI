@@ -13,11 +13,11 @@ Update your app to the latest release by a click of a button!
 
 ## How to configure the auto updater(Latest)
 
-`TBD..` `Currently just ignore this since 2.5 hasnt been released yet and is unstable`
+`TBD..`
+`for now read the release 2.5`
 
 
-
-## How to configure the auto updater(Before V2.5)
+## How to configure the auto updater(Before V2.0-V2.1)
 
 - Launch the .exe and wait for it to generate a **config.ini** file
 - The `USERNAME` Should be your github username
