@@ -138,7 +138,7 @@ def update():
                 percentageshow.configure(text=f"{downloadsizeshow}%")
                 root.update()
 
-    if UNZIP_FILE == True:
+    if UNZIP_FILE == "True":
         with zipfile.ZipFile(file=f"update{FILE_TYPE}") as zip_file:
             uncompress_size = sum((file.file_size for file in zip_file.infolist()))
 
