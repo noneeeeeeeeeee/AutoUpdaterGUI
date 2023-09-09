@@ -2,10 +2,14 @@
 
 Update your app to the latest release by a click of a button!
 
+**WARNING: THIS APP WILL DELETE EVERYTHING IN THE DIRECTORY YOU PLACE IT IN WHEN UPDATING**
+
+<hr>
+
 #### Table of Contents
 
 - [How to Configure the Auto Updater](#how-to-configure-the-auto-updaterlatest)
-- [How to Configure the Auto Updater(Before v2.5)](#how-to-configure-the-auto-updaterbefore-v25)
+- [How to Configure the Auto Updater(V2.0-V2.1)](#how-to-configure-the-auto-updaterV20-V21)
 - [Portable Version](#Portable)
 - [How it Works](#Howitworks)
 
@@ -13,11 +17,11 @@ Update your app to the latest release by a click of a button!
 
 ## How to configure the auto updater(Latest)
 
-`TBD..` `Currently just ignore this since 2.5 hasnt been released yet and is unstable`
+`TBD..`
+`for now read the release 2.5`
 
 
-
-## How to configure the auto updater(Before V2.5)
+## How to configure the auto updater(V2.0-V2.1)
 
 - Launch the .exe and wait for it to generate a **config.ini** file
 - The `USERNAME` Should be your github username
