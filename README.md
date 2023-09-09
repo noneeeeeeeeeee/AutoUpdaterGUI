@@ -4,6 +4,8 @@ Update your app to the latest release by a click of a button!
 
 **WARNING: THIS APP WILL DELETE EVERYTHING IN THE DIRECTORY YOU PLACE IT IN WHEN UPDATING**
 
+<hr>
+
 #### Table of Contents
 
 - [How to Configure the Auto Updater](#how-to-configure-the-auto-updaterlatest)
